@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {MatFormField} from '@angular/material/form-field';
+import {MatFormField, MatLabel} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
 import {MatButton} from '@angular/material/button';
 import {LoginService} from './login.model';
@@ -21,7 +21,8 @@ import {Router} from '@angular/router';
     FormsModule,
     ReactiveFormsModule,
     AsyncPipe,
-    NgIf
+    NgIf,
+    MatLabel
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
@@ -52,13 +53,15 @@ export class LoginComponent {
       this.snackBar.open('Přihlášen', '', {
         horizontalPosition: 'center',
         verticalPosition: 'bottom',
-        panelClass: 'snackbar-success'
+        panelClass: 'snackbar-success',
+        duration: 2000
       })
     }).catch(() => {
       this.snackBar.open('Nepřihlášen', '', {
         horizontalPosition: 'center',
         verticalPosition: 'bottom',
-        panelClass: 'snackbar-danger'
+        panelClass: 'snackbar-danger',
+        duration: 2000
       })
     })
   }

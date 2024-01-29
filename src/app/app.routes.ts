@@ -7,5 +7,5 @@ import {ResultsComponent} from './components/results/results.component';
 export const routes: Routes = [
   {path: '', pathMatch: 'full', component: LoginComponent},
   {path: 'home', component: HomeComponent, canActivate: [loginGuardGuard]},
-  {path: 'results', component: ResultsComponent, canActivate: [loginGuardGuard]},
+  {path: 'results', component: ResultsComponent},
 ];

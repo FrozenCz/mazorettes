@@ -1,9 +1,11 @@
 <mat-toolbar [color]="'primary'">
   <mat-toolbar-row class="nav-top">
     <div>
-      <mat-icon>home</mat-icon>
+      <button mat-icon-button routerLink="/home" *ngIf="logged$ | async"><mat-icon>home</mat-icon></button>
+      <button mat-icon-button routerLink="/" *ngIf="!(logged$ | async)"><mat-icon>home</mat-icon></button>
+      <button mat-icon-button routerLink="/results"><mat-icon>grading</mat-icon></button>
     </div>
-    <button mat-icon-button (click)="logout()">
+    <button mat-icon-button (click)="logout()" *ngIf="(logged$ | async)">
       <mat-icon>logout</mat-icon>
     </button>
   </mat-toolbar-row>
@@ -11,6 +13,4 @@
 <main>
   <router-outlet/>
 </main>
-<mat-toolbar [color]="'primary'">
-  <mat-toolbar-row>Footer</mat-toolbar-row>
-</mat-toolbar>
+
