@@ -1,0 +1,23 @@
+@use '@angular/material' as mat;
+@include mat.core();
+@import "../palettes/orange";
+@import "../palettes/blue";
+@import "../palettes/yellow";
+
+$scout-orange: mat.define-palette($scout-orange1);
+$scout-blue: mat.define-palette($scout-blue1);
+$scout-yellow: mat.define-palette($scout-yellow1);
+
+
+$my-theme: mat.define-light-theme((
+  color: (
+    primary: mat.define-palette(mat.$light-green-palette),
+    accent: mat.define-palette(mat.$blue-gray-palette),
+    warn: mat.define-palette(mat.$red-palette),
+  ),
+  typography: mat.define-typography-config(),
+  density: 0,
+));
+
+
+@include mat.all-component-themes($my-theme);

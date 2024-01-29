@@ -1,0 +1,33 @@
+$defaultColor: #F49E00;
+$scout-orange1: (
+  50: lighten($defaultColor, 52%),
+  100: lighten($defaultColor, 37%),
+  200: lighten($defaultColor, 26%),
+  300: lighten($defaultColor, 12%),
+  400: lighten($defaultColor, 6%),
+  500: $defaultColor,
+  600: darken($defaultColor, 6%),
+  700: darken($defaultColor, 12%),
+  800: darken($defaultColor, 18%),
+  900: darken($defaultColor, 24%),
+  A100: lighten($defaultColor, 62%),
+  A200: lighten($defaultColor, 72%),
+  A400: lighten($defaultColor, 82%),
+  A700: darken($defaultColor, 34%),
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #000000,
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: #000000,
+    A200: #000000,
+    A400: #000000,
+    A700: white,
+  )
+);

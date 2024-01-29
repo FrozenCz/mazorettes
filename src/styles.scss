@@ -1,1 +1,28 @@
 /* You can add global styles to this file, and also import other style files */
+/* Core Grid CSS */
+@import 'ag-grid-community/styles/ag-grid.css';
+/* Quartz Theme Specific CSS */
+@import 'ag-grid-community/styles/ag-theme-quartz.css';
+
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background: linear-gradient(#2f2f2f, #1a1a1a); }
+
+
+
+
+
+.mat-mdc-snack-bar-container {
+  &.snackbar {
+    &-success {
+      --mdc-snackbar-container-color: #4caf50;
+      --mat-mdc-snack-bar-button-color: #fff;
+      --mdc-snackbar-supporting-text-color: #fff;
+    }
+    &-danger {
+      --mdc-snackbar-container-color: #f44336;
+      --mat-mdc-snack-bar-button-color: #fff;
+      --mdc-snackbar-supporting-text-color: #fff;
+    }
+  }
+}
