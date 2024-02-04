@@ -1,0 +1,8 @@
+<div class="result_name">
+  {{inputName}}
+</div>
+<mat-button-toggle-group (change)="onButtonChange($event)">
+  <mat-button-toggle color="primary" *ngFor="let i of numbers " [value]="i">{{i}}</mat-button-toggle>
+</mat-button-toggle-group>
+
+

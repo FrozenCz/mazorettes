@@ -1,1 +1,45 @@
-<p>referee-form works!</p>
+<div class="attendee-number">
+  <div>
+    Číslo účastníka
+  </div>
+  <button mat-icon-button (click)="attendeeNumber=attendeeNumber-1;">
+    <mat-icon>arrow_left</mat-icon>
+  </button>
+  <button mat-stroked-button (click)="showNumber(attendeeNumber)">{{attendeeNumber}}</button>
+  <button mat-icon-button (click)="attendeeNumber=attendeeNumber+1;">
+    <mat-icon>arrow_right</mat-icon>
+  </button>
+</div>
+
+<mat-form-field>
+  <mat-label>Kategorie</mat-label>
+  <mat-select>
+    <mat-option *ngFor="let type of types" [value]="type">{{type}}</mat-option>
+  </mat-select>
+</mat-form-field>
+
+
+<div class="results">
+  <app-result-input [inputName]="'Choreografie'" [toNumber]="5"></app-result-input>
+  <app-result-input [inputName]="'Obtížnost'" [toNumber]="5"></app-result-input>
+  <app-result-input [inputName]="'Vhodnost kostýmu, líčení'" [toNumber]="5"></app-result-input>
+  <app-result-input [inputName]="'Celkový dojem'" [toNumber]="5"></app-result-input>
+  <app-result-input [inputName]="'Výraz soutěžících'" [toNumber]="5"></app-result-input>
+  <app-result-input [inputName]="'Hudba'" [toNumber]="5"></app-result-input>
+  <app-result-input [inputName]="'Četnost pádu náčiní'" [toNumber]="5"></app-result-input>
+</div>
+<div class="bottom">
+  <mat-form-field hideRequiredMarker="true">
+    <mat-label>Poznámky</mat-label>
+    <textarea matInput rows="5"></textarea>
+  </mat-form-field>
+  <div class="bottom__summary">
+    <div>
+      Celkový počet bodů:
+    </div>
+    <button mat-flat-button color="primary">Odeslat</button>
+  </div>
+
+</div>
+
+

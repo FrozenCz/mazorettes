@@ -1,0 +1,21 @@
+:host {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+}
+
+.result_name {
+  width: 200px;
+  text-align: right;
+}
+
+::ng-deep .mat-button-toggle {
+  button {
+    padding: 0.5rem 1rem;
+  }
+}
+

@@ -11,13 +11,25 @@ $scout-yellow: mat.define-palette($scout-yellow1);
 
 $my-theme: mat.define-light-theme((
   color: (
-    primary: mat.define-palette(mat.$light-green-palette),
-    accent: mat.define-palette(mat.$blue-gray-palette),
+    primary: mat.define-palette(mat.$deep-purple-palette),
+    accent: mat.define-palette(mat.$blue-palette),
     warn: mat.define-palette(mat.$red-palette),
   ),
   typography: mat.define-typography-config(),
   density: 0,
 ));
+
+
+
+.mat-button-toggle-appearance-standard.mat-button-toggle {
+    background-color: #3b3b3b;
+    color: #cbcbcb;
+  }
+
+app-result-input .mat-button-toggle-appearance-standard.mat-button-toggle-checked {
+    background-color: #2196f3;
+    color: #fff;
+  }
 
 
 @include mat.all-component-themes($my-theme);

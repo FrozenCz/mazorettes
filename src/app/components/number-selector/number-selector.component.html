@@ -1,0 +1,13 @@
+<div mat-dialog-title class="dialog-title">
+  <button mat-icon-button (click)="number=''"><mat-icon>restart_alt</mat-icon></button>
+  #: {{number}}
+</div>
+<mat-dialog-content>
+  <div class="numbers">
+    <button class="small-numbers" mat-fab color="accent" *ngFor="let i of numbers" (click)="addNumber(i)">{{i}}</button>
+  </div>
+  <button mat-flat-button color="accent" style="width: 100%" (click)="addNumber(0)">0</button>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-flat-button color="primary" (click)="close()">Ok</button>
+</mat-dialog-actions>
