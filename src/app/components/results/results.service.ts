@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {Assignee, ResultService} from './model';
-import {Observable, ReplaySubject} from 'rxjs';
+import {Assignee, AssigneeDTO, Result, ResultService} from './model';
+import {map, Observable, ReplaySubject} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {restIp} from '../../../environments/environment';
 
@@ -16,9 +16,21 @@ export class ResultsServiceImpl implements ResultService {
   }
 
   getResults$(): Observable<Assignee[]> {
-    return this.httpClient.get<Assignee[]>(restIp + '/mazorettes');
+    return this.httpClient.get<AssigneeDTO[]>(restIp + '/mazorettes').pipe(map(results => {
+      return results.map(result => {
+        return {
+          ...result,
+          totalNumber: this.getTotalNumber(result)
+        }
+      })
+    }))
   }
 
 
+  private getTotalNumber(result: AssigneeDTO) {
+    return 0;
+  }
+
+  // private calculateResult(result: Result)
 
 }

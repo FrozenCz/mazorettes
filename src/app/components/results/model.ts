@@ -7,6 +7,9 @@ export enum Category {
   group
 }
 
+export interface ResultCategory {
+  [K: number]: Category
+}
 export interface Result {
   [K: number]: number
 }
@@ -17,7 +20,7 @@ export interface RefereeNotes {
 
 export interface Assignee {
   ordNumber: number
-  category: Category
+  category: ResultCategory
   choreography: Result
   difficulty: Result
   costumes: Result
@@ -28,6 +31,24 @@ export interface Assignee {
   notes: RefereeNotes
   synchro: Result | undefined
   formationChange: Result | undefined
+  mainCategory: Category
+  totalNumber: number
+}
+
+export interface AssigneeDTO {
+  ordNumber: number
+  category: ResultCategory
+  choreography: Result
+  difficulty: Result
+  costumes: Result
+  overall: Result
+  facialExpression: Result
+  music: Result
+  faults: Result
+  notes: RefereeNotes
+  synchro: Result | undefined
+  formationChange: Result | undefined
+  mainCategory: Category
 }
 
 export abstract class ResultService {

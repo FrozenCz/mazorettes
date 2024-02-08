@@ -28,3 +28,11 @@ main {
   box-sizing: border-box;
   color: #ccdecc;
 }
+
+
+.menuButton {
+  position: fixed;
+  right: 0rem;
+  top: 0rem;
+  z-index: 5;
+}

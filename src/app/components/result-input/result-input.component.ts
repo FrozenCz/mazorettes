@@ -21,16 +21,16 @@ export class ResultInputComponent implements OnChanges {
 
   @Input() toNumber: number = 0;
   @Input() inputName: string = '';
-  @Output() selectedButton: EventEmitter<number | undefined> = new EventEmitter<number | undefined>();
+  @Input() selected: number | undefined = undefined;
+  @Output() selectedChange: EventEmitter<number | undefined> = new EventEmitter<number | undefined>();
   numbers: number[] = [];
 
-
   onButtonChange($event: MatButtonToggleChange) {
-    this.selectedButton.emit($event.value);
+    this.selectedChange.emit($event.value);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    const toNumber = changes['toNumber'].currentValue;
+    const toNumber = changes['toNumber']?.currentValue;
     if (changes && toNumber !== undefined) {
       this.numbers = [];
       for (let i = 0; i <= toNumber; i++) {
@@ -38,4 +38,7 @@ export class ResultInputComponent implements OnChanges {
       }
     }
   }
+
+
+
 }

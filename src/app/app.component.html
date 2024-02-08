@@ -1,4 +1,5 @@
-<mat-toolbar [color]="'primary'">
+<button mat-icon-button class="menuButton" color="primary" *ngIf="!showMenu" (click)="showMenu=!showMenu"><mat-icon>menu</mat-icon></button>
+<mat-toolbar [color]="'primary'" *ngIf="showMenu">
   <mat-toolbar-row class="nav-top">
     <div>
       <button mat-icon-button routerLink="/home" *ngIf="logged$ | async"><mat-icon>home</mat-icon></button>
@@ -8,6 +9,7 @@
     <button mat-icon-button (click)="logout()" *ngIf="(logged$ | async)">
       <mat-icon>logout</mat-icon>
     </button>
+    <button mat-icon-button (click)="showMenu=!showMenu"><mat-icon>menu</mat-icon></button>
   </mat-toolbar-row>
 </mat-toolbar>
 <main>

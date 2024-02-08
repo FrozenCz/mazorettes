@@ -18,6 +18,7 @@ import {Observable} from 'rxjs';
 export class AppComponent {
   title = 'mazorettes';
   logged$: Observable<boolean>;
+  showMenu: boolean = false;
 
   constructor(private tokenService: TokenService) {
     this.logged$ = tokenService.isLogged();

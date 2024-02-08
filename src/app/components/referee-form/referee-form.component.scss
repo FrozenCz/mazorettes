@@ -14,6 +14,7 @@
     color: #fff !important;
     border-color: #fff !important;
   }
+  margin-bottom: 1rem;
 }
 
 .results {
@@ -34,14 +35,30 @@
   }
   &__summary {
     display: flex;
+    min-width: 150px;
     flex-direction: column;
     align-items: stretch;
+    & > div {
+      text-align: center;
+    }
     button {
       flex-grow: 1;
     }
   }
 }
 
-::ng-deep .bottom .mat-mdc-form-field-subscript-wrapper{
+.locker {
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.6);
+}
+
+::ng-deep .mat-mdc-form-field-subscript-wrapper{
   display: none;
 }

@@ -1,6 +1,23 @@
+<ng-container *ngIf="results$ | async as results">
+<div class="buttonToggleWrapper">
+  <mat-button-toggle-group>
+    <mat-button-toggle (click)="setFilter(undefined)" [checked]="true">Vše</mat-button-toggle>
+    <mat-button-toggle (click)="setFilter(Category.solo)">Solo</mat-button-toggle>
+    <mat-button-toggle (click)="setFilter(Category.duo)">Duo</mat-button-toggle>
+    <mat-button-toggle (click)="setFilter(Category.trio)">Trio</mat-button-toggle>
+    <mat-button-toggle (click)="setFilter(Category.group)">Skupiny</mat-button-toggle>
+  </mat-button-toggle-group>
+  <div>
+    <button mat-icon-button (click)="printResults(results)"><mat-icon>description</mat-icon></button>
+  </div>
+</div>
+
+
 <ag-grid-angular
   class="ag-theme-quartz"
-  style="height: 500px;"
-  [rowData]="results$ | async"
+  [columnDefs]="colDefs"
+  [rowData]="results"
+  [defaultColDef]="defColDef"
 >
 </ag-grid-angular>
+</ng-container>
