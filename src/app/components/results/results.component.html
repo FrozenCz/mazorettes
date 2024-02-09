@@ -1,18 +1,21 @@
 <ng-container *ngIf="results$ | async as results">
 <div class="buttonToggleWrapper">
-  <mat-button-toggle-group>
-    <mat-button-toggle (click)="setFilter(undefined)" [checked]="true">Vše</mat-button-toggle>
-    <mat-button-toggle (click)="setFilter(Category.solo)">Solo</mat-button-toggle>
-    <mat-button-toggle (click)="setFilter(Category.duo)">Duo</mat-button-toggle>
-    <mat-button-toggle (click)="setFilter(Category.trio)">Trio</mat-button-toggle>
-    <mat-button-toggle (click)="setFilter(Category.group)">Skupiny</mat-button-toggle>
-  </mat-button-toggle-group>
   <div>
-    <button mat-icon-button (click)="switchColumns()" [title]="'Zobrazit všechny sloupce'" [color]="showAllColumns ? 'accent' : 'basic'">
-      <mat-icon *ngIf="showAllColumns">toggle_on</mat-icon>
-      <mat-icon *ngIf="!showAllColumns">toggle_off</mat-icon></button>
-    <button mat-icon-button (click)="printResults(results)" [title]="'Exportovat do excelu'"><mat-icon>description</mat-icon></button>
+    <mat-button-toggle-group>
+      <mat-button-toggle (click)="setFilter(undefined)" [checked]="true">Vše</mat-button-toggle>
+      <mat-button-toggle (click)="setFilter(Category.solo)">Solo</mat-button-toggle>
+      <mat-button-toggle (click)="setFilter(Category.duo)">Duo</mat-button-toggle>
+      <mat-button-toggle (click)="setFilter(Category.trio)">Trio</mat-button-toggle>
+      <mat-button-toggle (click)="setFilter(Category.group)">Skupiny</mat-button-toggle>
+    </mat-button-toggle-group>
+    <div>
+      <button mat-icon-button (click)="switchColumns()" [title]="'Zobrazit všechny sloupce'" [color]="showAllColumns ? 'accent' : 'basic'">
+        <mat-icon *ngIf="showAllColumns">toggle_on</mat-icon>
+        <mat-icon *ngIf="!showAllColumns">toggle_off</mat-icon></button>
+      <button mat-icon-button (click)="printResults(results)" [title]="'Exportovat do excelu'"><mat-icon>description</mat-icon></button>
+    </div>
   </div>
+  <button mat-icon-button style="margin-right: 2rem;" (click)="downloadData()" [title]="'Načíst výsledky'"><mat-icon>refresh</mat-icon></button>
 </div>
 
 

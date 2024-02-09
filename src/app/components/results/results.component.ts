@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {AgGridAngular} from 'ag-grid-angular';
 import {ColDef, GridOptions, GridReadyEvent, GridApi, ColumnApi} from 'ag-grid-community';
 import {AsyncPipe, JsonPipe, NgIf} from '@angular/common';
-import {BehaviorSubject, combineLatest, map, Observable, tap} from 'rxjs';
+import {BehaviorSubject, combineLatest, map, Observable, ReplaySubject, switchMap, tap} from 'rxjs';
 import {Assignee, Category, ResultCategory, ResultService} from './model';
 import {ResultsServiceImpl} from './results.service';
 import {DisciplineMap} from '../../shared/model';
@@ -12,6 +12,7 @@ import {MatIcon} from '@angular/material/icon';
 import {XlsxService} from '../../xlsx/xlsx.service';
 import {MatInput} from '@angular/material/input';
 import {FormsModule} from '@angular/forms';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-results',
@@ -25,6 +26,7 @@ export class ResultsComponent {
   protected readonly Category = Category;
   showAllColumns = false;
   filter$: BehaviorSubject<Category | undefined> = new BehaviorSubject<Category | undefined>(undefined);
+  refresh$: ReplaySubject<void> = new ReplaySubject<void>(1);
 
   results$: Observable<Assignee[]>;
   gridOptions: GridOptions = {
@@ -72,8 +74,8 @@ export class ResultsComponent {
   searchValue: string = '';
 
 
-  constructor(private resultService: ResultService, private xlsx: XlsxService) {
-    this.results$ = combineLatest([resultService.getResults$(), this.filter$]).pipe(
+  constructor(private resultService: ResultService, private xlsx: XlsxService, private snackBar: MatSnackBar) {
+    this.results$ = this.refresh$.pipe(switchMap(() => combineLatest([resultService.getResults$(), this.filter$]).pipe(
       map(([results, filter]) => {
         if (filter === undefined) {
           return results;
@@ -83,10 +85,14 @@ export class ResultsComponent {
       tap(() => {
         if (this.gridApi) {
           this.gridApi.redrawRows();
+          this.snackBar.open('Hotovo', undefined, {duration: 2000})
         }
-      })
+      })))
     );
+
+    this.refresh$.next();
   }
+
 
   private showRefereeRenderer(params: any): string {
     let result = '';
@@ -147,4 +153,7 @@ export class ResultsComponent {
 
   }
 
+  downloadData() {
+    this.refresh$.next();
+  }
 }
