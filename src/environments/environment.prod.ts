@@ -6,4 +6,5 @@ export const environment = {
 // export const webSocketUrl = 'wss://bp.milanknop.cz/rest/';
 // export const webSocketUrl = 'wss://dp-rest.milanknop.cz';
 export const webSocketUrl = 'https://dp-rest.milanknop.cz';
-export const restIp = 'https://dp-rest.milanknop.cz';
+// export const restIp = 'https://dp-rest.milanknop.cz';
+export const restIp = '/api';
