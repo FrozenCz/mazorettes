@@ -29,8 +29,8 @@ export interface Assignee {
   music: Result
   faults: Result
   notes: RefereeNotes
-  synchro: Result | undefined
-  formationChange: Result | undefined
+  synchro: Result
+  formationChange: Result
   mainCategory: Category
   totalNumber: number
 }
@@ -46,8 +46,8 @@ export interface AssigneeDTO {
   music: Result
   faults: Result
   notes: RefereeNotes
-  synchro: Result | undefined
-  formationChange: Result | undefined
+  synchro: Result
+  formationChange: Result
   mainCategory: Category
 }
 

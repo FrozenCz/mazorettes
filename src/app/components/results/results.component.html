@@ -8,7 +8,10 @@
     <mat-button-toggle (click)="setFilter(Category.group)">Skupiny</mat-button-toggle>
   </mat-button-toggle-group>
   <div>
-    <button mat-icon-button (click)="printResults(results)"><mat-icon>description</mat-icon></button>
+    <button mat-icon-button (click)="switchColumns()" [title]="'Zobrazit všechny sloupce'" [color]="showAllColumns ? 'accent' : 'basic'">
+      <mat-icon *ngIf="showAllColumns">toggle_on</mat-icon>
+      <mat-icon *ngIf="!showAllColumns">toggle_off</mat-icon></button>
+    <button mat-icon-button (click)="printResults(results)" [title]="'Exportovat do excelu'"><mat-icon>description</mat-icon></button>
   </div>
 </div>
 
@@ -18,6 +21,8 @@
   [columnDefs]="colDefs"
   [rowData]="results"
   [defaultColDef]="defColDef"
+  [gridOptions]="gridOptions"
+  (gridReady)="onGridReady($event)"
 >
 </ag-grid-angular>
 </ng-container>

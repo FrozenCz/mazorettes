@@ -42,7 +42,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 })
 export class RefereeFormComponent {
   numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-  attendeeNumber: number = 0;
+  attendeeNumber: number = 1;
   types = DisciplineTypes;
   selectedType: DisciplineType | undefined = undefined;
   toNumber: 5 | 10 = 5;
@@ -137,7 +137,7 @@ export class RefereeFormComponent {
       note: this.note
     })).then(() => {
       this.snackBar.open(`Hodnocení účastníka ${this.attendeeNumber} úspěšně odesláno. Obdržel od Vás ${this.totalNumber} bodů.`, undefined,{duration: 5000});
-      // this.result = {...this.getDefaultValues()}
+      this.result = {...this.getDefaultValues()}
       this.note = '';
       if (this.selectedType) {
         this.prefillCategoryDependency(this.selectedType);

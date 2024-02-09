@@ -93,10 +93,11 @@ export class XlsxService {
     let ordNumber = 1;
 
     // runners.sort((a, b) => (a.time && b.time) ? (a.time - b.time) : 0 );
+    runners.sort((a, b) => b.totalNumber - a.totalNumber );
 
     sheet.addRow([categoryName])
     sheet.addRow([]);
-    sheet.addRow([null, 'Pořadí', 'S.Č.', 'Jméno', 'Příjmení', 'Čas']).eachCell(cell => {
+    sheet.addRow([null, 'Pořadí', 'S.Č.', 'Počet bodů']).eachCell(cell => {
       cell.style
       cell.fill = {fgColor: {argb: '2563EB'}, pattern: 'solid', type: 'pattern'}
       cell.font = {color: {argb: 'FFFFFF'}}
@@ -115,7 +116,7 @@ export class XlsxService {
 
 
   private runnerItem(ordNumber: number, runner: Assignee): any[] {
-    return [null,ordNumber, runner.ordNumber, runner.synchro];
+    return [null,ordNumber, runner.ordNumber, runner.totalNumber];
   }
 
 }

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {Assignee, AssigneeDTO, Result, ResultService} from './model';
-import {map, Observable, ReplaySubject} from 'rxjs';
+import {Assignee, AssigneeDTO, Category, Result, ResultService} from './model';
+import {map, Observable, ReplaySubject, tap} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {restIp} from '../../../environments/environment';
 
@@ -23,14 +23,43 @@ export class ResultsServiceImpl implements ResultService {
           totalNumber: this.getTotalNumber(result)
         }
       })
-    }))
+    })
+    )
   }
 
 
   private getTotalNumber(result: AssigneeDTO) {
-    return 0;
+    let totalNumber = 0;
+    totalNumber = this.getTotalNumberFromResults([
+      result.choreography,
+      result.difficulty,
+      result.costumes,
+      result.overall,
+      result.facialExpression,
+      result.music,
+      result.faults,
+    ]);
+
+    if([Category.duo, Category.trio].includes(result.mainCategory)) {
+      totalNumber = totalNumber + this.getTotalNumberFromResults([result.synchro]);
+    }
+
+    if (result.mainCategory === Category.group) {
+      totalNumber = totalNumber + this.getTotalNumberFromResults([result.synchro, result.formationChange])
+    }
+
+    return totalNumber;
   }
 
-  // private calculateResult(result: Result)
 
+  private getTotalNumberFromResults(results: Result[]) {
+    let totalNum = 0;
+    results.forEach(result => {
+      for (let key in result) {
+        totalNum = totalNum + result[key];
+      }
+    })
+
+    return totalNum;
+  }
 }
