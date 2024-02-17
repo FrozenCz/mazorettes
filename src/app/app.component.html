@@ -5,6 +5,8 @@
       <button mat-icon-button routerLink="/home" *ngIf="logged$ | async"><mat-icon>home</mat-icon></button>
       <button mat-icon-button routerLink="/" *ngIf="!(logged$ | async)"><mat-icon>home</mat-icon></button>
       <button mat-icon-button routerLink="/results"><mat-icon>grading</mat-icon></button>
+      <button mat-icon-button routerLink="/lineup" *ngIf="(logged$ | async) && !(refereeSelected$ | async)" style="margin-left: 3rem"><mat-icon>flag</mat-icon></button>
+      <button mat-icon-button routerLink="/categories" *ngIf="(logged$ | async) && !(refereeSelected$ | async)"><mat-icon>settings</mat-icon></button>
     </div>
     <button mat-icon-button (click)="logout()" *ngIf="(logged$ | async)">
       <mat-icon>logout</mat-icon>

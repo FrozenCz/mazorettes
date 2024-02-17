@@ -9,7 +9,11 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background: linear-gradient(#2f2f2f, #1a1a1a); }
 
 
-
+app-root {
+    height: 100%;
+    width: 100%;
+  display: block;
+}
 
 
 .mat-mdc-snack-bar-container {

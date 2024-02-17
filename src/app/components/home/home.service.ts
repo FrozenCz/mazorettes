@@ -25,5 +25,11 @@ export class HomeServiceImpl implements HomeService {
     return this.tokenService.getToken().pipe(map(token => !!token.refereeNumber));
   }
 
+  refereeNumber$(): Observable<number | undefined> {
+    return this.tokenService.getToken().pipe(map(token => token.refereeNumber));
+  }
+
+
+
 
 }

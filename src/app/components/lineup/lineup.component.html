@@ -1,0 +1,44 @@
+<div class="lineup-form">
+  <div class="attendee-number">
+    <div>
+      Číslo účastníka
+    </div>
+    <button mat-icon-button (click)="attendeeNumber=attendeeNumber-1;">
+      <mat-icon>arrow_left</mat-icon>
+    </button>
+    <button mat-stroked-button (click)="showNumber(attendeeNumber)">{{attendeeNumber}}</button>
+    <button mat-icon-button (click)="attendeeNumber=attendeeNumber+1;">
+      <mat-icon>arrow_right</mat-icon>
+    </button>
+
+    <div class="lineup-form__fields">
+      <mat-form-field>
+        <mat-label>Kategorie</mat-label>
+        <mat-select (selectionChange)="onCategoryChanged($event)">
+          <mat-option *ngFor="let type of types" [value]="type">{{type}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Podkategorie</mat-label>
+        <mat-select (selectionChange)="onCategoryChanged($event)">
+          <mat-option *ngFor="let type of types" [value]="type">{{type}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="flexi">
+        <mat-label>Soutěžící</mat-label>
+        <input matInput>
+      </mat-form-field>
+      <button mat-flat-button [color]="'primary'" style="height: 56px;"><mat-icon>save</mat-icon>Přidat</button>
+      <button mat-flat-button [color]="'accent'" style="height: 56px;"><mat-icon>edit</mat-icon>Uložit</button>
+    </div>
+
+  </div>
+</div>
+<ag-grid-angular
+  class="ag-theme-quartz"
+  [columnDefs]="colDefs"
+  [rowData]="attendees$ | async"
+  [gridOptions]="gridOptions"
+  (gridReady)="onGridReady($event)"
+>
+</ag-grid-angular>

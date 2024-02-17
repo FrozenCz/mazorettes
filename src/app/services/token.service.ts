@@ -59,6 +59,21 @@ export class TokenService implements LoginService {
     return !!date && (new Date(date * 1000) > new Date());
   }
 
+  public static refereeSelected(): boolean {
+    const localStorageToken = localStorage.getItem('authJwtToken');
+
+    if (!localStorageToken) {
+      return false;
+    }
+
+    const refereeNumber = (jwtDecode(localStorageToken.toString()) as {
+      refereeNumber: number | undefined
+    }).refereeNumber
+
+    return refereeNumber !== undefined;
+
+  }
+
   logout() {
     localStorage.removeItem('authJwtToken');
     this.isLogged$.next(false);

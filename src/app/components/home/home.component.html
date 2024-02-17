@@ -1,9 +1,11 @@
-<ng-container *ngIf="!(selectedRefereeNumber$ | async); else refereeForm;">
+<ng-container *ngIf="!((refereeNumber$ | async) !== undefined); else refereeForm;">
   <h2>Vyberte číslo rozhodčího</h2>
   <button mat-flat-button *ngFor="let referee of refereeNumbers" (click)="onRefereeSelected(referee)">{{referee}}</button>
 </ng-container>
 
 <ng-template #refereeForm>
-  <app-referee-form></app-referee-form>
+  <ng-container *ngIf="(selectedRefereeNumber$ | async)">
+    <app-referee-form></app-referee-form>
+  </ng-container>
 </ng-template>
 

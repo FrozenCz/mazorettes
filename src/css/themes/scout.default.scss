@@ -19,7 +19,10 @@ $my-theme: mat.define-light-theme((
   density: 0,
 ));
 
-
+.ag-theme-quartz .ag-row-selected {
+  background-color: #2196f3;
+  color: #fff;
+}
 
 .mat-button-toggle-appearance-standard.mat-button-toggle {
     background-color: #3b3b3b;

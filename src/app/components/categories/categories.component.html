@@ -1,0 +1,27 @@
+<div class="categories__form">
+  <mat-form-field>
+    <mat-label>Název kategorie</mat-label>
+    <input matInput [(ngModel)]="categoryName" required>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Hodnocení podle</mat-label>
+    <mat-select (selectionChange)="onCategoryChanged($event)" [value]="selectedType">
+      <mat-option *ngFor="let type of types" [value]="type">{{type}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <button mat-flat-button color="primary" (click)="createGroup(selectedType, categoryName)" [disabled]="selectedType === undefined || categoryName.length === 0" *ngIf="!editedCategoryNumber">Vytvořit</button>
+  <button mat-flat-button color="accent" (click)="saveGroup(selectedType, categoryName, editedCategoryNumber)" [disabled]="selectedType === undefined || categoryName.length === 0" *ngIf="editedCategoryNumber">Uložit</button>
+  <button mat-icon-button color="warn" *ngIf="editedCategoryNumber" (click)="deleteGroup()"><mat-icon>delete_outline</mat-icon></button>
+  <button mat-icon-button color="basic" *ngIf="editedCategoryNumber" (click)="editedCategoryNumber=undefined;grid.api.deselectAll()"><mat-icon>highlight_off</mat-icon></button>
+</div>
+
+
+<ag-grid-angular
+  class="ag-theme-quartz"
+  [columnDefs]="colDefs"
+  [rowData]="groups$ | async"
+  [gridOptions]="gridOptions"
+  (gridReady)="onGridReady($event)"
+  #grid
+>
+</ag-grid-angular>

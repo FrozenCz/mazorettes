@@ -1,22 +1,20 @@
 import {Category} from '../components/results/model';
 
-export const RefereeNumbers = [1, 2, 3, 4];
+export const RefereeNumbers = [0, 1, 2, 3, 4];
 
-export type DisciplineType =  'Solo' | 'Duo' | 'Trio' | 'Skupina'
-export const DisciplineTypes: DisciplineType[] = ['Solo', 'Duo', 'Trio', 'Skupina']
+export type DisciplineType =  'Solo' | 'Duo' | 'Skupina'
+export const DisciplineTypes: DisciplineType[] = ['Solo', 'Duo', 'Skupina']
 
 export const CategoryDisciplineMap: Map<DisciplineType, Category> = new Map<DisciplineType, Category>([
   ['Solo', 0],
   ['Duo', 1],
-  ['Trio', 2],
-  ['Skupina', 3],
+  ['Skupina', 2],
 ])
 
 export const DisciplineMap: Map<Category, DisciplineType> = new Map<Category, DisciplineType>([
   [0, 'Solo'],
   [1, 'Duo'],
-  [2, 'Trio'],
-  [3, 'Skupina'],
+  [2, 'Skupina'],
 ])
 
 export interface Criteria {

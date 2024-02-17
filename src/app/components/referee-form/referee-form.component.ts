@@ -94,7 +94,6 @@ export class RefereeFormComponent {
         this.result.synchro = 0;
         break;
       case 'Duo':
-      case 'Trio':
         this.result.formationChange = 0;
         this.result.synchro = this.selectedType !== 'Solo' ? this.result.synchro ?? undefined : undefined
         break;

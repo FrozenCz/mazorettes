@@ -6,4 +6,6 @@ export abstract class HomeService {
 
   abstract isRefereeNumberSelected$(): Observable<boolean>
 
+  abstract refereeNumber$(): Observable<number | undefined>
+
 }

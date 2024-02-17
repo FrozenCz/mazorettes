@@ -5,7 +5,7 @@ import {MatIcon} from '@angular/material/icon';
 import {MatIconButton} from '@angular/material/button';
 import {TokenService} from './services/token.service';
 import {AsyncPipe, NgIf} from '@angular/common';
-import {Observable} from 'rxjs';
+import {map, Observable} from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -19,9 +19,11 @@ export class AppComponent {
   title = 'mazorettes';
   logged$: Observable<boolean>;
   showMenu: boolean = false;
+  refereeSelected$: Observable<boolean>;
 
   constructor(private tokenService: TokenService) {
     this.logged$ = tokenService.isLogged();
+    this.refereeSelected$ = tokenService.getToken().pipe(map(token => token.refereeNumber !== undefined))
   }
   logout() {
     if (confirm('Opravdu se chcete odhlásit z aplikace?')) {

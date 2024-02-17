@@ -1,0 +1,24 @@
+:host {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  gap: 1rem;
+  grid-template-rows: auto 1fr;
+}
+
+.categories__form {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1rem;
+  button:not([mat-icon-button]) {
+    height: 100%;
+  }
+
+}
+
+::ng-deep .mat-mdc-form-field-subscript-wrapper{
+  display: none;
+}
+
+
