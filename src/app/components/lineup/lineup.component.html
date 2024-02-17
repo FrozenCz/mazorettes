@@ -3,25 +3,19 @@
     <div>
       Číslo účastníka
     </div>
-    <button mat-icon-button (click)="attendeeNumber=attendeeNumber-1;">
+    <button mat-icon-button (click)="changeAttendeeNumber(attendeeNumber$.getValue()-1)">
       <mat-icon>arrow_left</mat-icon>
     </button>
-    <button mat-stroked-button (click)="showNumber(attendeeNumber)">{{attendeeNumber}}</button>
-    <button mat-icon-button (click)="attendeeNumber=attendeeNumber+1;">
+    <button mat-stroked-button (click)="showNumber(attendeeNumber$.getValue())">{{attendeeNumber$ | async}}</button>
+    <button mat-icon-button (click)="changeAttendeeNumber(attendeeNumber$.getValue()+1);">
       <mat-icon>arrow_right</mat-icon>
     </button>
 
     <div class="lineup-form__fields">
       <mat-form-field>
-        <mat-label>Kategorie</mat-label>
-        <mat-select (selectionChange)="onCategoryChanged($event)">
-          <mat-option *ngFor="let type of types" [value]="type">{{type}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Podkategorie</mat-label>
-        <mat-select (selectionChange)="onCategoryChanged($event)">
-          <mat-option *ngFor="let type of types" [value]="type">{{type}}</mat-option>
+        <mat-label>Skupina</mat-label>
+        <mat-select (selectionChange)="onGroupChanged($event)">
+          <mat-option *ngFor="let group of groups$ | async" [value]="group">{{group.name}}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field class="flexi">

@@ -48,6 +48,7 @@ export class CategoriesComponent {
     valueGetter: (params) => DisciplineMap.has(params.data.resultBy) ? DisciplineMap.get(params.data.resultBy) : 'skupina nenalezena'
   }];
   gridOptions: GridOptions = {
+    getRowId: (params) =>params.data.uuid,
     rowSelection: 'single',
     onRowClicked: (params) => {
       this.editedCategoryNumber = params.data.uuid

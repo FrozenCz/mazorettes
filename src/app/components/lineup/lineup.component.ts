@@ -1,11 +1,10 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {AgGridAngular} from 'ag-grid-angular';
 import {Attendee, LineupService} from './model';
-import {Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {LineupServiceImpl} from './lineup.service';
-import {AsyncPipe, NgForOf} from '@angular/common';
-import {ColDef, GridOptions, GridReadyEvent} from 'ag-grid-community';
-import {DisciplineType, DisciplineTypes} from '../../shared/model';
+import {AsyncPipe, JsonPipe, NgForOf} from '@angular/common';
+import {ColDef, GridApi, GridOptions, GridReadyEvent} from 'ag-grid-community';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatFormField, MatLabel} from '@angular/material/form-field';
 import {MatIcon} from '@angular/material/icon';
@@ -14,6 +13,7 @@ import {MatSelect, MatSelectChange} from '@angular/material/select';
 import {NumberSelectorComponent} from '../number-selector/number-selector.component';
 import {MatDialog} from '@angular/material/dialog';
 import {MatInput} from '@angular/material/input';
+import {Group} from '../categories/model';
 
 @Component({
   selector: 'app-lineup',
@@ -29,7 +29,8 @@ import {MatInput} from '@angular/material/input';
     MatOption,
     MatSelect,
     NgForOf,
-    MatInput
+    MatInput,
+    JsonPipe
   ],
   templateUrl: './lineup.component.html',
   styleUrl: './lineup.component.scss',
@@ -37,19 +38,41 @@ import {MatInput} from '@angular/material/input';
 })
 export class LineupComponent {
   attendees$: Observable<Attendee[]>
-  colDefs: ColDef[] = [];
-  gridOptions: GridOptions = {};
-  selectedType: DisciplineType | undefined = undefined;
-  types = DisciplineTypes;
-  attendeeNumber: number = 1;
+  colDefs: ColDef[] = [{
+    field: 'startNumber',
+    headerName: 'Startovní číslo'
+  },
+    {
+      field: 'note',
+      headerName: 'Soutěžící'
+    },
+    {
+      field: 'group.name',
+      headerName: 'Skupina'
+    }
+  ];
+  gridOptions: GridOptions = {
+    rowSelection: 'single',
+    getRowId: (params) => params.data.startNumber,
+    onRowClicked: (params) => {
+
+      this.attendeeNumber$.next(params.data.startNumber)
+
+    }
+  };
+  selectedGroup: Group | undefined = undefined
+  groups$: Observable<Group[]>
+  attendeeNumber$: BehaviorSubject<number> = new BehaviorSubject<number>(1);
+  private gridApi: GridApi<any> | undefined;
 
   constructor(private service: LineupService, private matDialog: MatDialog) {
     this.attendees$ = service.getAttendees$()
+    this.groups$ = service.getGroups$();
   }
 
 
   onGridReady($event: GridReadyEvent<any>) {
-
+    this.gridApi = $event.api;
   }
 
 
@@ -58,13 +81,29 @@ export class LineupComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result !== undefined) {
-        this.attendeeNumber = result;
+        this.attendeeNumber$.next(result)
+        this.scrollToRow(result);
       }
     })
   }
 
-  onCategoryChanged($event: MatSelectChange) {
-    const selectedType = ($event.value as DisciplineType)
-    this.selectedType = selectedType;
+  onGroupChanged($event: MatSelectChange) {
+    const selectedType = ($event.value as Group)
+    this.selectedGroup = selectedType;
+  }
+
+  scrollToRow(attendeeStartNumber: number): void {
+    const row = this.gridApi?.getRowNode(attendeeStartNumber.toString());
+    if (row) {
+      row.setSelected(true, true)
+      this.gridApi?.ensureNodeVisible(row, 'middle');
+    } else {
+      this.gridApi?.deselectAll();
+    }
+  }
+
+  changeAttendeeNumber(number: number) {
+    this.attendeeNumber$.next(number);
+    this.scrollToRow(number)
   }
 }
