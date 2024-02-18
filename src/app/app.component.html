@@ -1,17 +1,39 @@
-<button mat-icon-button class="menuButton" color="primary" *ngIf="!showMenu" (click)="showMenu=!showMenu"><mat-icon>menu</mat-icon></button>
+<button mat-icon-button class="menuButton" color="primary" *ngIf="!showMenu" (click)="showMenu=!showMenu">
+  <mat-icon>menu</mat-icon>
+</button>
 <mat-toolbar [color]="'primary'" *ngIf="showMenu">
   <mat-toolbar-row class="nav-top">
     <div>
-      <button mat-icon-button routerLink="/home" *ngIf="logged$ | async"><mat-icon>home</mat-icon></button>
-      <button mat-icon-button routerLink="/" *ngIf="!(logged$ | async)"><mat-icon>home</mat-icon></button>
-      <button mat-icon-button routerLink="/results"><mat-icon>grading</mat-icon></button>
-      <button mat-icon-button routerLink="/lineup" *ngIf="(logged$ | async) && !(refereeSelected$ | async)" style="margin-left: 3rem"><mat-icon>flag</mat-icon></button>
-      <button mat-icon-button routerLink="/categories" *ngIf="(logged$ | async) && !(refereeSelected$ | async)"><mat-icon>settings</mat-icon></button>
+      <button [routerLinkActive]="'selected'" routerLink="/home" *ngIf="logged$ | async" mat-stroked-button>
+        <mat-icon>home</mat-icon>
+        Výběr funkce
+      </button>
+      <button [routerLinkActive]="'selected'" mat-icon-button routerLink="/" *ngIf="!(logged$ | async)">
+        <mat-icon>home</mat-icon>
+      </button>
+      <button [routerLinkActive]="'selected'" mat-stroked-button routerLink="/results">
+        <mat-icon>grading</mat-icon>
+        Výsledky
+      </button>
+      <button [routerLinkActive]="'selected'" mat-stroked-button routerLink="/lineup" *ngIf="(logged$ | async) && !(refereeSelected$ | async)">
+        <mat-icon>flag</mat-icon>
+        Účastníci
+      </button>
+      <button [routerLinkActive]="'selected'" mat-stroked-button routerLink="/categories" *ngIf="(logged$ | async) && !(refereeSelected$ | async)">
+        <mat-icon>settings</mat-icon>
+        Skupiny
+      </button>
     </div>
-    <button mat-icon-button (click)="logout()" *ngIf="(logged$ | async)">
-      <mat-icon>logout</mat-icon>
-    </button>
-    <button mat-icon-button (click)="showMenu=!showMenu"><mat-icon>menu</mat-icon></button>
+    <div>
+
+      <button mat-stroked-button (click)="logout()" *ngIf="(logged$ | async)">
+        <mat-icon>logout</mat-icon>
+        Odhlášení
+      </button>
+      <button mat-icon-button (click)="showMenu=!showMenu">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </div>
   </mat-toolbar-row>
 </mat-toolbar>
 <main>

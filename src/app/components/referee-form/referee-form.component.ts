@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {MatButtonToggle, MatButtonToggleGroup} from '@angular/material/button-toggle';
-import {NgForOf, NgIf} from '@angular/common';
+import {AsyncPipe, JsonPipe, NgForOf, NgIf} from '@angular/common';
 import {ResultInputComponent} from '../result-input/result-input.component';
 import {MatFormField, MatOption, MatSelect, MatSelectChange} from '@angular/material/select';
 import {MatLabel} from '@angular/material/form-field';
@@ -9,13 +9,23 @@ import {NumberSelectorComponent} from '../number-selector/number-selector.compon
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {MatInput} from '@angular/material/input';
-import {CategoryDisciplineMap, DisciplineType, DisciplineTypes} from '../../shared/model';
+import {CategoryDisciplineMap, DisciplineMap, DisciplineType, DisciplineTypes} from '../../shared/model';
 import {Result} from './model';
 import {MatProgressBar} from '@angular/material/progress-bar';
 import {RefereeFormService} from './referee-form.service';
-import {firstValueFrom} from 'rxjs';
+import {
+  BehaviorSubject,
+  filter,
+  firstValueFrom,
+  Observable,
+  OperatorFunction,
+  switchMap,
+  tap
+} from 'rxjs';
 import {FormsModule} from '@angular/forms';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {Attendee} from '../lineup/model';
+import {AttendeesLineupComponent} from '../attendees-lineup/attendees-lineup.component';
 
 @Component({
   selector: 'app-referee-form',
@@ -35,14 +45,16 @@ import {MatSnackBar} from '@angular/material/snack-bar';
     MatInput,
     NgIf,
     MatProgressBar,
-    FormsModule
+    FormsModule,
+    AsyncPipe,
+    JsonPipe
   ],
   templateUrl: './referee-form.component.html',
   styleUrl: './referee-form.component.scss'
 })
 export class RefereeFormComponent {
   numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-  attendeeNumber: number = 1;
+
   types = DisciplineTypes;
   selectedType: DisciplineType | undefined = undefined;
   toNumber: 5 | 10 = 5;
@@ -51,9 +63,23 @@ export class RefereeFormComponent {
   valid: boolean = false;
   sendingResult = false;
   note: string = ''
+  attendee$: Observable<Attendee | undefined>
+  attendeeNumber$: BehaviorSubject<number | undefined> = new BehaviorSubject<number | undefined>(undefined);
+  attendees$: Observable<Attendee[]>
 
   constructor(private matDialog: MatDialog, private service: RefereeFormService, private snackBar: MatSnackBar) {
     this.result = this.getDefaultValues();
+    this.attendee$ = this.attendeeNumber$.pipe(
+      filter(attendeeNumber => attendeeNumber !== undefined) as OperatorFunction<number | undefined, number>,
+      switchMap((attendeeNumber => service.getAttendee$(attendeeNumber))))
+      .pipe(tap(attendee => {
+        this.onCategoryChanged((attendee?.group.resultBy !== undefined ? DisciplineMap.get(attendee?.group.resultBy) : 'Solo'));
+      }))
+    this.attendees$ = service.getAttendees$().pipe(tap(attendees => {
+      if (this.attendeeNumber$.getValue() === undefined) {
+        this.attendeeNumber$.next(attendees[0].startNumber)
+      }
+    }))
   }
 
   getDefaultValues(): Result {
@@ -75,16 +101,18 @@ export class RefereeFormComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result !== undefined) {
-        this.attendeeNumber = result;
+        this.attendeeNumber$ = result;
       }
     })
   }
 
-  onCategoryChanged($event: MatSelectChange) {
-    const selectedType = ($event.value as DisciplineType)
-    this.prefillCategoryDependency(selectedType);
-    this.selectedType = selectedType;
-    this.toNumber = (selectedType === 'Skupina') ? 10 : 5;
+  onCategoryChanged(disciplineType: DisciplineType | undefined) {
+    if (disciplineType === undefined) {
+      return;
+    }
+    this.prefillCategoryDependency(disciplineType);
+    this.selectedType = disciplineType;
+    this.toNumber = (disciplineType === 'Skupina') ? 10 : 5;
   }
 
   private prefillCategoryDependency(disciplineType: DisciplineType): void {
@@ -118,11 +146,11 @@ export class RefereeFormComponent {
     }
   }
 
-  sendResult() {
+  sendResult(attendeeNumber: number) {
     this.sendingResult = true;
 
     firstValueFrom(this.service.sendResults({
-      ordNumber: this.attendeeNumber,
+      ordNumber: attendeeNumber,
       category: this.selectedType ? CategoryDisciplineMap.get(this.selectedType) ?? 0 : 0,
       costumes: this.result.costumes ?? 0,
       choreography: this.result.choreography ?? 0,
@@ -135,16 +163,48 @@ export class RefereeFormComponent {
       synchro: this.result.synchro ?? 0,
       note: this.note
     })).then(() => {
-      this.snackBar.open(`Hodnocení účastníka ${this.attendeeNumber} úspěšně odesláno. Obdržel od Vás ${this.totalNumber} bodů.`, undefined,{duration: 5000});
+      this.snackBar.open(`Hodnocení účastníka ${this.attendeeNumber$} úspěšně odesláno. Obdržel od Vás ${this.totalNumber} bodů.`, undefined, {duration: 5000});
       this.result = {...this.getDefaultValues()}
       this.note = '';
       if (this.selectedType) {
         this.prefillCategoryDependency(this.selectedType);
       }
-      this.attendeeNumber++;
+      this.nextAttendee();
       this.sendingResult = false;
     }).catch(() => {
       this.sendingResult = false;
+    })
+
+  }
+
+  previousAttendee() {
+    firstValueFrom(this.attendees$).then(attendees => {
+      const index = attendees.findIndex(a => a.startNumber === this.attendeeNumber$.getValue())
+      const previous = attendees[index - 1];
+      if (previous) {
+        this.attendeeNumber$.next(previous.startNumber);
+      }
+    });
+  }
+
+  nextAttendee() {
+    firstValueFrom(this.attendees$).then(attendees => {
+      const index = attendees.findIndex(a => a.startNumber === this.attendeeNumber$.getValue())
+      const nextAttendee = attendees[index + 1];
+      if (nextAttendee) {
+        this.attendeeNumber$.next(nextAttendee.startNumber);
+      }
+    });
+  }
+
+  showAttendees() {
+    firstValueFrom(this.attendees$).then((attendees) => {
+      const dialogRef = this.matDialog.open(AttendeesLineupComponent, {data: {attendees: attendees, startNumber: this.attendeeNumber$.getValue()}, height: '700px', minWidth: '800px', maxWidth: '80%', disableClose: true});
+      dialogRef.afterClosed().subscribe(close => {
+        if (close) {
+          this.attendeeNumber$.next(close)
+        }
+      })
     })
 
   }

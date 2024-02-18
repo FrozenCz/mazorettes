@@ -1,31 +1,36 @@
 <ng-container *ngIf="results$ | async as results">
-<div class="buttonToggleWrapper">
-  <div>
-    <mat-button-toggle-group>
-      <mat-button-toggle (click)="setFilter(undefined)" [checked]="true">Vše</mat-button-toggle>
-      <mat-button-toggle (click)="setFilter(Category.solo)">Solo</mat-button-toggle>
-      <mat-button-toggle (click)="setFilter(Category.duo)">Duo</mat-button-toggle>
-      <mat-button-toggle (click)="setFilter(Category.trio)">Trio</mat-button-toggle>
-      <mat-button-toggle (click)="setFilter(Category.group)">Skupiny</mat-button-toggle>
-    </mat-button-toggle-group>
+  <div class="buttonToggleWrapper">
     <div>
-      <button mat-icon-button (click)="switchColumns()" [title]="'Zobrazit všechny sloupce'" [color]="showAllColumns ? 'accent' : 'basic'">
-        <mat-icon *ngIf="showAllColumns">toggle_on</mat-icon>
-        <mat-icon *ngIf="!showAllColumns">toggle_off</mat-icon></button>
-      <button mat-icon-button (click)="printResults(results)" [title]="'Exportovat do excelu'"><mat-icon>description</mat-icon></button>
+      <mat-form-field>
+        <mat-select (selectionChange)="setFilter($event.value)" [value]="'Vše'">
+          <mat-option [value]="'Vše'">Vše</mat-option>
+          <mat-option *ngFor="let menu of menus" [value]="menu.uuid">{{menu.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div>
+        <button mat-icon-button (click)="switchColumns()" [title]="'Zobrazit všechny sloupce'"
+                [color]="showAllColumns ? 'accent' : 'basic'">
+          <mat-icon *ngIf="showAllColumns">toggle_on</mat-icon>
+          <mat-icon *ngIf="!showAllColumns">toggle_off</mat-icon>
+        </button>
+        <button mat-icon-button (click)="printResults(results)" [title]="'Exportovat do excelu'">
+          <mat-icon>description</mat-icon>
+        </button>
+      </div>
     </div>
+    <button mat-icon-button style="margin-right: 2rem;" (click)="downloadData()" [title]="'Načíst výsledky'">
+      <mat-icon>refresh</mat-icon>
+    </button>
   </div>
-  <button mat-icon-button style="margin-right: 2rem;" (click)="downloadData()" [title]="'Načíst výsledky'"><mat-icon>refresh</mat-icon></button>
-</div>
 
 
-<ag-grid-angular
-  class="ag-theme-quartz"
-  [columnDefs]="colDefs"
-  [rowData]="results"
-  [defaultColDef]="defColDef"
-  [gridOptions]="gridOptions"
-  (gridReady)="onGridReady($event)"
->
-</ag-grid-angular>
+  <ag-grid-angular
+    class="ag-theme-quartz"
+    [columnDefs]="colDefs"
+    [rowData]="results"
+    [defaultColDef]="defColDef"
+    [gridOptions]="gridOptions"
+    (gridReady)="onGridReady($event)"
+  >
+  </ag-grid-angular>
 </ng-container>

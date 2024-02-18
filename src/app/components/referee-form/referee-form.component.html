@@ -1,50 +1,63 @@
 <div class="locker" *ngIf="sendingResult">
   <mat-progress-bar mode="indeterminate" *ngIf="sendingResult"></mat-progress-bar>
 </div>
-<div class="attendee-number">
-  <div>
-    Číslo účastníka
-  </div>
-  <button mat-icon-button (click)="attendeeNumber=attendeeNumber-1;">
-    <mat-icon>arrow_left</mat-icon>
-  </button>
-  <button mat-stroked-button (click)="showNumber(attendeeNumber)">{{attendeeNumber}}</button>
-  <button mat-icon-button (click)="attendeeNumber=attendeeNumber+1;">
-    <mat-icon>arrow_right</mat-icon>
-  </button>
-  <mat-form-field>
-    <mat-label>Kategorie</mat-label>
-    <mat-select (selectionChange)="onCategoryChanged($event)">
-      <mat-option *ngFor="let type of types" [value]="type">{{type}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-</div>
-
-
-<div class="results" *ngIf="selectedType">
-  <app-result-input [inputName]="'Choreografie'"  [toNumber]="toNumber" [(selected)]="result.choreography" (selectedChange)="recalculate();"></app-result-input>
-  <app-result-input [inputName]="'Obtížnostm práce s náčinním'" [toNumber]="toNumber" [(selected)]="result.difficulty" (selectedChange)="recalculate()"></app-result-input>
-  <app-result-input [inputName]="'Synchronizace'" *ngIf="selectedType!=='Solo'" [(selected)]="result.synchro" (selectedChange)="recalculate()"
-                    [toNumber]="toNumber"></app-result-input>
-  <app-result-input [inputName]="'Využití , střídání obrazců'" *ngIf="selectedType==='Skupina'" [(selected)]="result.formationChange" (selectedChange)="recalculate()" [toNumber]="toNumber"></app-result-input>
-  <app-result-input [inputName]="'Vhodnost kostýmu, líčení'" [toNumber]="toNumber" [(selected)]="result.costumes" (selectedChange)="recalculate()"></app-result-input>
-  <app-result-input [inputName]="'Celkový dojem'" [toNumber]="toNumber" [(selected)]="result.overall" (selectedChange)="recalculate()"></app-result-input>
-  <app-result-input [inputName]="'Výraz soutěžících'" [toNumber]="toNumber" [(selected)]="result.facialExpression" (selectedChange)="recalculate()"></app-result-input>
-  <app-result-input [inputName]="'Hudba'" [toNumber]="toNumber" [(selected)]="result.music" (selectedChange)="recalculate()"></app-result-input>
-  <app-result-input [inputName]="'Četnost pádu náčiní'" [toNumber]="toNumber"  [(selected)]="result.faults" (selectedChange)="recalculate()"></app-result-input>
-</div>
-<div class="bottom">
-  <mat-form-field hideRequiredMarker="true">
-    <mat-label>Poznámky</mat-label>
-    <textarea matInput rows="5" [(ngModel)]="note"></textarea>
-  </mat-form-field>
-  <div class="bottom__summary">
-    <div>
-      Celkem bodů: {{totalNumber}}
+<ng-container *ngIf="attendees$ | async">
+  <ng-container *ngIf="attendee$ | async as attendee">
+    <div class="attendee-number">
+      <div>
+        Číslo účastníka
+      </div>
+      <button mat-icon-button (click)="previousAttendee()">
+        <mat-icon>arrow_left</mat-icon>
+      </button>
+      <button mat-stroked-button (click)="showAttendees()">{{attendeeNumber$ | async}}</button>
+      <button mat-icon-button (click)="nextAttendee()">
+        <mat-icon>arrow_right</mat-icon>
+      </button>
+      <div>
+        {{attendee.note}}
+      </div>
     </div>
-    <button mat-flat-button color="primary" [disabled]="!valid" (click)="sendResult()">Odeslat</button>
-  </div>
-
-</div>
 
 
+    <div class="results" *ngIf="selectedType">
+      <app-result-input [inputName]="'Choreografie'" [toNumber]="toNumber" [(selected)]="result.choreography"
+                        (selectedChange)="recalculate();"></app-result-input>
+      <app-result-input [inputName]="'Obtížnostm práce s náčinním'" [toNumber]="toNumber"
+                        [(selected)]="result.difficulty"
+                        (selectedChange)="recalculate()"></app-result-input>
+      <app-result-input [inputName]="'Synchronizace'" *ngIf="selectedType!=='Solo'" [(selected)]="result.synchro"
+                        (selectedChange)="recalculate()"
+                        [toNumber]="toNumber"></app-result-input>
+      <app-result-input [inputName]="'Využití , střídání obrazců'" *ngIf="selectedType==='Skupina'"
+                        [(selected)]="result.formationChange" (selectedChange)="recalculate()"
+                        [toNumber]="toNumber"></app-result-input>
+      <app-result-input [inputName]="'Vhodnost kostýmu, líčení'" [toNumber]="toNumber" [(selected)]="result.costumes"
+                        (selectedChange)="recalculate()"></app-result-input>
+      <app-result-input [inputName]="'Celkový dojem'" [toNumber]="toNumber" [(selected)]="result.overall"
+                        (selectedChange)="recalculate()"></app-result-input>
+      <app-result-input [inputName]="'Výraz soutěžících'" [toNumber]="toNumber" [(selected)]="result.facialExpression"
+                        (selectedChange)="recalculate()"></app-result-input>
+      <app-result-input [inputName]="'Hudba'" [toNumber]="toNumber" [(selected)]="result.music"
+                        (selectedChange)="recalculate()"></app-result-input>
+      <app-result-input [inputName]="'Četnost pádu náčiní'" [toNumber]="toNumber" [(selected)]="result.faults"
+                        (selectedChange)="recalculate()"></app-result-input>
+    </div>
+    <div class="bottom">
+      <mat-form-field hideRequiredMarker="true">
+        <mat-label>Poznámky</mat-label>
+        <textarea matInput rows="5" [(ngModel)]="note"></textarea>
+      </mat-form-field>
+      <div class="bottom__summary">
+        <div>
+          Celkem bodů: {{totalNumber}}
+        </div>
+        <button mat-flat-button color="primary" [disabled]="!valid" (click)="sendResult(attendee.startNumber)">Odeslat
+        </button>
+      </div>
+
+    </div>
+
+
+  </ng-container>
+</ng-container>

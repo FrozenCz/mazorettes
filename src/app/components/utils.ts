@@ -4,8 +4,7 @@ export abstract class Utils {
     const newMap = new Map<string, T>();
 
     for (let i = 0; i< arr.length; i++) {
-      // @ts-ignore
-      newMap.set(arr[i][propertyName], arr[i])
+      newMap.set(arr[i][propertyName] + '', arr[i])
     }
 
     return newMap

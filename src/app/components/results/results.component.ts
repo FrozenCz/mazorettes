@@ -1,23 +1,25 @@
 import {Component} from '@angular/core';
 import {AgGridAngular} from 'ag-grid-angular';
 import {ColDef, GridOptions, GridReadyEvent, GridApi, ColumnApi} from 'ag-grid-community';
-import {AsyncPipe, JsonPipe, NgIf} from '@angular/common';
-import {BehaviorSubject, combineLatest, map, Observable, ReplaySubject, switchMap, tap} from 'rxjs';
-import {Assignee, Category, ResultCategory, ResultService} from './model';
+import {AsyncPipe, JsonPipe, NgForOf, NgIf} from '@angular/common';
+import {BehaviorSubject, combineLatest, map, Observable, ReplaySubject, switchMap, tap, timer} from 'rxjs';
+import {Assignee, Category, ResultService} from './model';
 import {ResultsServiceImpl} from './results.service';
-import {DisciplineMap} from '../../shared/model';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatButtonToggle, MatButtonToggleGroup} from '@angular/material/button-toggle';
 import {MatIcon} from '@angular/material/icon';
 import {XlsxService} from '../../xlsx/xlsx.service';
-import {MatInput} from '@angular/material/input';
+import {MatFormField, MatInput} from '@angular/material/input';
 import {FormsModule} from '@angular/forms';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {Group} from '../categories/model';
+import {MatOption, MatSelect} from '@angular/material/select';
+import {AG_GRID_LOCALE_CS} from '../../locale.cs';
 
 @Component({
   selector: 'app-results',
   standalone: true,
-  imports: [AgGridAngular, AsyncPipe, JsonPipe, MatButton, MatButtonToggle, MatButtonToggleGroup, MatIconButton, MatIcon, NgIf, MatInput, FormsModule],
+  imports: [AgGridAngular, AsyncPipe, JsonPipe, MatButton, MatButtonToggle, MatButtonToggleGroup, MatIconButton, MatIcon, NgIf, MatInput, FormsModule, NgForOf, MatSelect, MatOption, MatFormField],
   providers: [{provide: ResultService, useClass: ResultsServiceImpl}],
   templateUrl: './results.component.html',
   styleUrl: './results.component.scss'
@@ -25,11 +27,12 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 export class ResultsComponent {
   protected readonly Category = Category;
   showAllColumns = false;
-  filter$: BehaviorSubject<Category | undefined> = new BehaviorSubject<Category | undefined>(undefined);
+  filter$: BehaviorSubject<string | undefined> = new BehaviorSubject<string | undefined>(undefined);
   refresh$: ReplaySubject<void> = new ReplaySubject<void>(1);
 
   results$: Observable<Assignee[]>;
   gridOptions: GridOptions = {
+    localeText: AG_GRID_LOCALE_CS,
     getRowId: ({data}) => data.ordNumber,
     includeHiddenColumnsInQuickFilter: false,
   };
@@ -38,7 +41,9 @@ export class ResultsComponent {
   defColDef: ColDef = {
     cellRenderer: this.showRefereeRenderer,
     sortable: false,
-    suppressMovable: true
+    suppressMovable: true,
+    floatingFilter: true,
+    filter: 'agTextColumnFilter'
   }
   colDefs: ColDef[] = [
     {
@@ -52,7 +57,14 @@ export class ResultsComponent {
       headerName: 'Startovní číslo',
       cellRenderer: (params: any) => params.value
     },
-    {colId: 'category', field: 'category', headerName: 'Kategorie', cellRenderer: this.categoryRenderer},
+    {
+      colId: 'attendeeNote',
+      field: 'attendeeNote',
+      headerName: 'Účastníci číslo',
+      cellRenderer: (params: any) => params.value
+    },
+    {colId: 'category', field: 'categoryName', headerName: 'Kategorie', cellRenderer: (p: any) => p.value},
+    {colId: 'resultBy', field: 'resultBy', headerName: 'Hodnoceno podle', cellRenderer: (p: any) => p.value},
     {colId: 'choreography', field: 'choreography', headerName: 'Choreografie', hide: true},
     {colId: 'difficulty', field: 'difficulty', headerName: 'Obtížnostm práce s náčinním', hide: true},
     {colId: 'costumes', field: 'costumes', headerName: 'Vhodnost kostýmu, líčení', hide: true},
@@ -65,6 +77,7 @@ export class ResultsComponent {
     {
       colId: 'totalNumber',
       field: 'totalNumber',
+      filter: 'agNumberColumnFilter',
       headerName: 'Celkový počet',
       cellRenderer: (params: any) => params.value,
       sort: 'desc'
@@ -72,25 +85,34 @@ export class ResultsComponent {
     {colId: 'notes', field: 'notes', headerName: 'Poznámky', cellClass: 'note', hide: true},
   ];
   searchValue: string = '';
+  menus: Group[] = [];
+  showSnack: boolean = false;
 
 
   constructor(private resultService: ResultService, private xlsx: XlsxService, private snackBar: MatSnackBar) {
-    this.results$ = this.refresh$.pipe(switchMap(() => combineLatest([resultService.getResults$(), this.filter$]).pipe(
-      map(([results, filter]) => {
+    this.results$ = this.refresh$.pipe(switchMap(() => combineLatest([resultService.getResults$(), this.filter$, resultService.getGroups$()]).pipe(
+      map(([results, filter, groups]) => {
+        this.menus = groups;
         if (filter === undefined) {
           return results;
         }
-        return results.filter(r => filter === r.mainCategory)
+        return results.filter(r => filter === r.categoryUuid)
       }),
       tap(() => {
         if (this.gridApi) {
           this.gridApi.redrawRows();
-          this.snackBar.open('Hotovo', undefined, {duration: 2000})
+          if (this.showSnack) {
+            this.snackBar.open('Hotovo', undefined, {duration: 2000})
+            this.showSnack = false;
+          }
         }
       })))
     );
 
     this.refresh$.next();
+    timer(60000, 60000).subscribe(() => {
+      this.refresh$.next();
+    })
   }
 
 
@@ -104,34 +126,12 @@ export class ResultsComponent {
     return result;
   }
 
-  private categoryExists(categoryObject: ResultCategory, category: Category): boolean {
-    return categoryObject[1] === category || categoryObject[2] === category || categoryObject[3] === category || categoryObject[4] === category
-  }
-
-  private categoryRenderer(params: any): string {
-    let errorResult = '';
-    let normalResult = '';
-    let showErrorResult = false;
-
-    let prop: keyof typeof params.value;
-    for (prop in params.value) {
-      const translatedCategory = DisciplineMap.get(params.value[prop])
-      errorResult += (errorResult.length > 0 ? ', ' : '') + prop + ': ' + translatedCategory;
-
-      if (normalResult.length === 0 && translatedCategory) {
-        normalResult = translatedCategory;
-      }
-
-      if (normalResult.length > 0 && normalResult !== translatedCategory) {
-        showErrorResult = true;
-      }
-
+  setFilter(param: string | undefined) {
+    if (param === 'Vše') {
+      this.filter$.next(undefined);
+    } else {
+      this.filter$.next(param);
     }
-    return showErrorResult ? errorResult + ', kategorie určená: ' + DisciplineMap.get(params.data.mainCategory) : normalResult;
-  }
-
-  setFilter(param: Category | undefined) {
-    this.filter$.next(param);
   }
 
   printResults(results: Assignee[]) {
@@ -154,6 +154,7 @@ export class ResultsComponent {
   }
 
   downloadData() {
+    this.showSnack = true;
     this.refresh$.next();
   }
 }

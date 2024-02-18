@@ -11,6 +11,14 @@ mat-toolbar {
       justify-content: flex-start;
       align-items: center;
     }
+    button {
+      border-color: transparent;
+      border-radius: 0;
+      &.selected {
+        border-bottom-color: #b39ddb;
+        border-top-color: #b39ddb;
+      }
+    }
   }
 }
 

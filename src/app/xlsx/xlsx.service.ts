@@ -9,7 +9,7 @@ export interface CategoryResults {
 }
 
 export interface CategoriesResult {
-  category: {id: Category, name: string},
+  category: { uuid: string, name: string },
   assignees: Assignee[];
 }
 
@@ -23,81 +23,84 @@ export class XlsxService {
 
   printResults(assignees: Assignee[]): void {
 
-      // const book = xlsx.utils.book_new();
-      const book = new exceljs.Workbook();
-      const results: CategoryResults = {categories: []};
-      assignees.forEach(assignee => {
-        const categoryFound = results.categories.find(category => category.category.id === assignee.mainCategory);
-        if(categoryFound) {
-          categoryFound.assignees.push(assignee);
-        } else {
-          const categoryFromMap = DisciplineMap.get(assignee.mainCategory);
-          results.categories.push({
-            category: categoryFromMap ? {id: assignee.mainCategory, name: categoryFromMap} : {id: assignee.mainCategory, name: 'kategorie nenalezena'},
-            assignees: [assignee]
-          })
-        }
-      });
-      results.categories.sort(((a, b) => a.category.name.localeCompare(b.category.name) ))
-      results.categories.forEach(category => {
-        const sheet = book.addWorksheet('Kategorie - ' + category.category.name);
-        sheet.columns = [{width: 5}, {width: 7}, {width: 7}, {width: 20}, {width: 20}, {width: 20}]
-        this.writeCategoryToSheet({sheet, runners: category.assignees, categoryName: ', Kategorie: ' + category.category.name})
+    // const book = xlsx.utils.book_new();
+    const book = new exceljs.Workbook();
+    const results: CategoryResults = {categories: []};
+    assignees.forEach(assignee => {
+      const categoryFound = results.categories.find(category => category.category.uuid === assignee.categoryUuid);
+      if (categoryFound) {
+        categoryFound.assignees.push(assignee);
+      } else {
+        results.categories.push({
+          category: {uuid: assignee.categoryUuid, name: assignee.categoryName},
+          assignees: [assignee]
+        })
+      }
+    });
+    results.categories.sort(((a, b) => a.category.name.localeCompare(b.category.name)))
+    results.categories.forEach(category => {
+      const sheet = book.addWorksheet('Kategorie - ' + category.category.name);
+      sheet.columns = [{width: 5}, {width: 7}, {width: 7}, {width: 7}, {width: 60}]
+      this.writeCategoryToSheet({
+        sheet,
+        runners: category.assignees,
+        categoryName: 'Kategorie: ' + category.category.name
+      })
 
-        for(let i = 2; i <= category.assignees.length + 3; i++) {
-          sheet.getRow(i).eachCell((cell, index) => {
-            cell.border = {
-              top: {style: 'thin', color: {argb: 'FF000000'}},
-              bottom: {style: 'thin', color: {argb: 'FF000000'}},
-              left: {style: 'thin', color: {argb: 'FF000000'}},
-              right: {style: 'thin', color: {argb: 'FF000000'}}
+      for (let i = 2; i <= category.assignees.length + 3; i++) {
+        sheet.getRow(i).eachCell((cell, index) => {
+          cell.border = {
+            top: {style: 'thin', color: {argb: 'FF000000'}},
+            bottom: {style: 'thin', color: {argb: 'FF000000'}},
+            left: {style: 'thin', color: {argb: 'FF000000'}},
+            right: {style: 'thin', color: {argb: 'FF000000'}}
+          }
+          if (i > 3) {
+            cell.fill = {
+              fgColor: {
+                argb: i % 2 ? 'f6f6f6' : 'ffffff'
+              },
+              type: 'pattern',
+              pattern: 'solid'
             }
-            if (i > 3) {
-              cell.fill = {
-                fgColor: {
-                  argb: i%2 ? 'f6f6f6' : 'ffffff'
-                },
-                type: 'pattern',
-                pattern: 'solid'
-              }
-            }
+          }
+          cell.alignment = {
+            vertical: 'middle',
+            indent: 1,
+            horizontal: 'left'
+          }
+          if (index === 2 || index === 3) {
             cell.alignment = {
               vertical: 'middle',
-              indent: 1,
-              horizontal: 'left'
+              horizontal: 'center'
             }
-            if (index === 2 || index === 3) {
-              cell.alignment = {
-                vertical: 'middle',
-                horizontal: 'center'
-              }
-            }
+          }
 
-            if (index === 6) {
-              cell.alignment = {
-                vertical: 'middle',
-                horizontal: 'right',
-                indent: 1
-              }
+          if (index === 6) {
+            cell.alignment = {
+              vertical: 'middle',
+              horizontal: 'right',
+              indent: 1
             }
-          })
-        }
-      });
+          }
+        })
+      }
+    });
 
-      XlsxUtils.publish(book, 'vysledky');
+    XlsxUtils.publish(book, 'vysledky');
 
   }
 
-  private writeCategoryToSheet(params: {categoryName: string; runners: Assignee[], sheet: exceljs.Worksheet}): void {
+  private writeCategoryToSheet(params: { categoryName: string; runners: Assignee[], sheet: exceljs.Worksheet }): void {
     const {categoryName, runners, sheet} = params;
     let ordNumber = 1;
 
     // runners.sort((a, b) => (a.time && b.time) ? (a.time - b.time) : 0 );
-    runners.sort((a, b) => b.totalNumber - a.totalNumber );
+    runners.sort((a, b) => b.totalNumber - a.totalNumber);
 
     sheet.addRow([categoryName])
     sheet.addRow([]);
-    sheet.addRow([null, 'Pořadí', 'S.Č.', 'Počet bodů']).eachCell(cell => {
+    sheet.addRow([null, 'Pořadí', 'S.Č.', 'Body', 'Účastníci']).eachCell(cell => {
       cell.style
       cell.fill = {fgColor: {argb: '2563EB'}, pattern: 'solid', type: 'pattern'}
       cell.font = {color: {argb: 'FFFFFF'}}
@@ -116,7 +119,7 @@ export class XlsxService {
 
 
   private runnerItem(ordNumber: number, runner: Assignee): any[] {
-    return [null,ordNumber, runner.ordNumber, runner.totalNumber];
+    return [null, ordNumber, runner.ordNumber, runner.totalNumber, runner.attendeeNote,];
   }
 
 }

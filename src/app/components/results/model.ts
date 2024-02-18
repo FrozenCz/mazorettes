@@ -1,14 +1,12 @@
 import {Observable} from 'rxjs';
+import {CategoriesResult} from '../../xlsx/xlsx.service';
+import {DisciplineType} from '../../shared/model';
+import {Group} from '../categories/model';
 
 export enum Category {
   solo,
   duo,
-  trio,
   group
-}
-
-export interface ResultCategory {
-  [K: number]: Category
 }
 export interface Result {
   [K: number]: number
@@ -20,7 +18,7 @@ export interface RefereeNotes {
 
 export interface Assignee {
   ordNumber: number
-  category: ResultCategory
+  attendeeNote: string;
   choreography: Result
   difficulty: Result
   costumes: Result
@@ -31,13 +29,14 @@ export interface Assignee {
   notes: RefereeNotes
   synchro: Result
   formationChange: Result
-  mainCategory: Category
+  categoryName: string
+  categoryUuid: string
+  resultBy: DisciplineType
   totalNumber: number
 }
 
 export interface AssigneeDTO {
   ordNumber: number
-  category: ResultCategory
   choreography: Result
   difficulty: Result
   costumes: Result
@@ -48,7 +47,6 @@ export interface AssigneeDTO {
   notes: RefereeNotes
   synchro: Result
   formationChange: Result
-  mainCategory: Category
 }
 
 export abstract class ResultService {
@@ -57,4 +55,5 @@ export abstract class ResultService {
 
   public abstract checkResults(): void
 
+  public abstract getGroups$(): Observable<Group[]>
 }

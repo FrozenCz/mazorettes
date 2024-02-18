@@ -19,4 +19,7 @@ export abstract class LineupService {
 
   abstract getGroups$(): Observable<Group[]>
 
+  abstract saveAttendee(param: {note: string; startNumber: number; groupUuid: string}): Observable<void>
+
+  abstract deleteAttendee(startNumber: number): Observable<void>
 }

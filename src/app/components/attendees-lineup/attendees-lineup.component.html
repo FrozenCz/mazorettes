@@ -1,0 +1,18 @@
+<h2 mat-dialog-title>Vyberte účastníka</h2>
+<mat-dialog-content>
+  <div class="attendees_lineup">
+    <ag-grid-angular
+      class="ag-theme-quartz"
+      [columnDefs]="colDefs"
+      [rowData]="data.attendees"
+      [gridOptions]="gridOptions"
+      (gridReady)="onGridReady($event)"
+      #grid
+    >
+    </ag-grid-angular>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-flat-button mat-dialog-close>Zrušit</button>
+  <button mat-flat-button color="primary" (click)="selectedRowEmit(grid.api)">Vybrat</button>
+</mat-dialog-actions>
