@@ -5,11 +5,14 @@ import {loginGuard, mainAccount} from './guards/login.guard';
 import {ResultsComponent} from './components/results/results.component';
 import {LineupComponent} from './components/lineup/lineup.component';
 import {CategoriesComponent} from './components/categories/categories.component';
+import {NotFoundComponent} from './components/not-found/not-found.component';
 
 export const routes: Routes = [
   {path: '', pathMatch: 'full', component: LoginComponent},
   {path: 'home', component: HomeComponent, canActivate: [loginGuard]},
   {path: 'results', component: ResultsComponent},
   {path: 'lineup', component: LineupComponent, canActivate: [mainAccount]},
-  {path: 'categories', component: CategoriesComponent, canActivate: [mainAccount]}
+  {path: 'categories', component: CategoriesComponent, canActivate: [mainAccount]},
+  {path: '404', component: NotFoundComponent},
+  {path: '**', redirectTo: '/404'}
 ];
