@@ -36,7 +36,8 @@ export class AttendeesLineupComponent {
   },
     {
       field: 'note',
-      headerName: 'Soutěžící'
+      headerName: 'Soutěžící',
+      flex: 1
     },
     {
       field: 'group.name',

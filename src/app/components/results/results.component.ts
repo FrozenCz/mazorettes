@@ -60,7 +60,8 @@ export class ResultsComponent {
     {
       colId: 'attendeeNote',
       field: 'attendeeNote',
-      headerName: 'Účastníci číslo',
+      flex: 1,
+      headerName: 'Účastníci',
       cellRenderer: (params: any) => params.value
     },
     {colId: 'category', field: 'categoryName', headerName: 'Kategorie', cellRenderer: (p: any) => p.value},

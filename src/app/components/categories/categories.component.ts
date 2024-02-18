@@ -45,6 +45,8 @@ export class CategoriesComponent {
     field: 'name',
   }, {
     colId: 'resultBy',
+    flex: 1,
+    headerName: 'Počítáno podle',
     valueGetter: (params) => DisciplineMap.has(params.data.resultBy) ? DisciplineMap.get(params.data.resultBy) : 'skupina nenalezena'
   }];
   gridOptions: GridOptions = {

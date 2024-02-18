@@ -46,13 +46,15 @@ export class LineupComponent {
     headerName: 'Startovní číslo'
   },
     {
-      field: 'note',
-      headerName: 'Soutěžící'
-    },
-    {
       field: 'group.name',
       headerName: 'Skupina'
+    },
+    {
+      field: 'note',
+      headerName: 'Soutěžící',
+      flex: 1,
     }
+
   ];
   gridOptions: GridOptions = {
     rowSelection: 'single',
@@ -81,9 +83,9 @@ export class LineupComponent {
 
   constructor(private service: LineupService, private matDialog: MatDialog) {
     this.attendees$ = service.getAttendees$().pipe(tap(() => {
-        timer(20).subscribe(() => {
-          this.scrollToRow(this.attendeeNumber$.getValue());
-        })
+      timer(20).subscribe(() => {
+        this.scrollToRow(this.attendeeNumber$.getValue());
+      })
     }))
     this.groups$ = service.getGroups$().pipe(tap(groups => this.groups = groups));
     this.isEdit$ = this.attendeeNumber$.pipe(withLatestFrom(this.attendees$)).pipe(map(([number, attendees]) => attendees.some(a => a.startNumber === number)))
@@ -140,7 +142,7 @@ export class LineupComponent {
 
   delete() {
     const startNumber = this.attendeeNumber$.getValue();
-    if(confirm('Opravdu chcete smazat startovní číslo ' + startNumber + '?') && startNumber !== undefined) {
+    if (confirm('Opravdu chcete smazat startovní číslo ' + startNumber + '?') && startNumber !== undefined) {
       firstValueFrom(this.service.deleteAttendee(startNumber)).then(noop)
     }
   }
