@@ -40,7 +40,7 @@ export class XlsxService {
     results.categories.sort(((a, b) => a.category.name.localeCompare(b.category.name)))
     results.categories.forEach(category => {
       const sheet = book.addWorksheet('Kategorie - ' + category.category.name);
-      sheet.columns = [{width: 5}, {width: 7}, {width: 7}, {width: 7}, {width: 60}]
+      sheet.columns = [{width: 5}, {width: 7}, {width: 7}, {width: 7}, {width: 60}, {width: 120}, {width: 20}, {width: 20}, {width: 20}, {width: 20}, {width: 20}, {width: 20}, {width: 20}, {width: 20}, {width: 20}]
       this.writeCategoryToSheet({
         sheet,
         runners: category.assignees,
@@ -75,11 +75,10 @@ export class XlsxService {
               horizontal: 'center'
             }
           }
-
           if (index === 6) {
             cell.alignment = {
               vertical: 'middle',
-              horizontal: 'right',
+              horizontal: 'left',
               indent: 1
             }
           }
@@ -100,7 +99,7 @@ export class XlsxService {
 
     sheet.addRow([categoryName])
     sheet.addRow([]);
-    sheet.addRow([null, 'Pořadí', 'S.Č.', 'Body', 'Účastníci']).eachCell(cell => {
+    sheet.addRow([null, 'Pořadí', 'S.Č.', 'Body', 'Účastníci', 'Poznámky', 'Choreografie', 'Obtížnostm práce s náčinním', 'Vhodnost kostýmu, líčení', 'Celkový dojem', 'Výraz soutěžících', 'Hudba', 'Četnost pádu náčiní', 'Synchronizace', 'Využití , střídání obrazců']).eachCell(cell => {
       cell.style
       cell.fill = {fgColor: {argb: '2563EB'}, pattern: 'solid', type: 'pattern'}
       cell.font = {color: {argb: 'FFFFFF'}}
@@ -119,7 +118,28 @@ export class XlsxService {
 
 
   private runnerItem(ordNumber: number, runner: Assignee): any[] {
-    return [null, ordNumber, runner.ordNumber, runner.totalNumber, runner.attendeeNote,];
+    return [null, ordNumber, runner.ordNumber, runner.totalNumber, runner.attendeeNote,
+      XlsxService.showRefereeRenderer(runner.notes),
+      XlsxService.showRefereeRenderer(runner.choreography),
+      XlsxService.showRefereeRenderer(runner.difficulty),
+      XlsxService.showRefereeRenderer(runner.costumes),
+      XlsxService.showRefereeRenderer(runner.overall),
+      XlsxService.showRefereeRenderer(runner.facialExpression),
+      XlsxService.showRefereeRenderer(runner.music),
+      XlsxService.showRefereeRenderer(runner.faults),
+      XlsxService.showRefereeRenderer(runner.synchro),
+      XlsxService.showRefereeRenderer(runner.formationChange),
+    ];
+  }
+
+
+  private static showRefereeRenderer(params: any): string {
+    let result = '';
+    let prop: keyof typeof params;
+    for (prop in params) {
+      result += (result.length > 0 ? ', ' : '') + prop + ':' + params[prop]
+    }
+    return result;
   }
 
 }
